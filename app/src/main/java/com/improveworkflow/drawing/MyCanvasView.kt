@@ -31,7 +31,12 @@ class MyCanvasView(context: Context) : View(context) {
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
-        canvas.drawBitmap(extraBitmap,0f,0f, null)
+        //canvas.drawBitmap(extraBitmap,0f,0f, null)
+
+        // Draw the drawing so far
+        canvas.drawPath(drawing, paint)
+        // Draw any current squiggle
+        canvas.drawPath(path, paint)
     }
 
     //region $methodsandvariablesforsimplerdrawing
@@ -52,6 +57,8 @@ class MyCanvasView(context: Context) : View(context) {
     }
 
     private var path = Path()
+    // Path representing the drawing so far
+    private val drawing = Path()
 
     private var motionTouchEventX = 0f
     private var motionTouchEventY = 0f
@@ -96,6 +103,9 @@ class MyCanvasView(context: Context) : View(context) {
     }
 
     fun touchUp() {
+        // Add the current path to the drawing so far
+        drawing.addPath(path)
+        // Rewind the current path for the next touch
         path.reset()
     }
     //endregion
