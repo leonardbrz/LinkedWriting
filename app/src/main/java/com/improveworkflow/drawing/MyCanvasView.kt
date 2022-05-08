@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
+import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
@@ -12,7 +13,7 @@ import androidx.core.content.res.ResourcesCompat
 
 private const val STROKE_WIDTH = 12f //has to be float
 
-class MyCanvasView(context: Context) : View(context) {
+class MyCanvasView(context: Context, attributeSet: AttributeSet) : View(context, attributeSet) {
     private lateinit var extraCanvas: Canvas
     private lateinit var extraBitmap: Bitmap
 

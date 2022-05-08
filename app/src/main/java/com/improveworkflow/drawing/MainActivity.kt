@@ -4,48 +4,24 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
+import android.widget.Toolbar
+import androidx.appcompat.app.ActionBar
 
 class MainActivity : AppCompatActivity() {
-
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val myCanvasView = MyCanvasView(this)
+        //val attr =
+        //val myCanvasView = MyCanvasView(this)
 
-        setContentView(myCanvasView)
-        //setting toolbar
-        setSupportActionBar(findViewById(R.id.toolbar))
+        setContentView(R.layout.activity_drawing)
+        //setContentView(R.layout.activity_main)
+        //finding and setting toolbar
+        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.thisspecifictoolbar)
+        setSupportActionBar(toolbar)
         //home navigation
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
-
-    //setting menu in action bar
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.my_menu,menu)
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    // actions on click menu items
-    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.action_print -> {
-            // User chose the "Print" item
-            Toast.makeText(this,"Print action", Toast.LENGTH_LONG).show()
-            true
-        }
-        android.R.id.home ->{
-            Toast.makeText(this,"Home action",Toast.LENGTH_LONG).show()
-            true
-        }
-
-        else -> {
-            // If we got here, the user's action was not recognized.
-            // Invoke the superclass to handle it.
-            super.onOptionsItemSelected(item)
-        }
-    }
-
-
 }

@@ -2,5 +2,7 @@
     <string name="app_name">drawing</string>
     <string name="canvasContentDescription">Mini Paint is a simple line drawing app.
    Drag your fingers to draw. Rotate the phone to clear.</string>
+    <string name="brush">this selects the brush tool</string>
+    <string name="erase">this selects the eraser button</string>
 
 </resources>
