@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewConfiguration
 import androidx.core.content.res.ResourcesCompat
 
+
 private const val STROKE_WIDTH = 12f //has to be float
 
 class MyCanvasView(context: Context, attributeSet: AttributeSet) : View(context, attributeSet) {
@@ -29,7 +30,7 @@ class MyCanvasView(context: Context, attributeSet: AttributeSet) : View(context,
         extraCanvas.drawColor(backgroundColor)
 
     }
-
+    //gets called each frame that the canvas gets drawn on the screen
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         //canvas.drawBitmap(extraBitmap,0f,0f, null)
@@ -40,7 +41,7 @@ class MyCanvasView(context: Context, attributeSet: AttributeSet) : View(context,
         canvas.drawPath(path, paint)
     }
 
-    //region $methodsandvariablesforsimplerdrawing
+    //region $methods and variables for simpler drawing
 
     private val drawColor = ResourcesCompat.getColor(resources, R.color.colorPaint, null)
 
@@ -83,27 +84,28 @@ class MyCanvasView(context: Context, attributeSet: AttributeSet) : View(context,
         return true
     }
 
-    fun touchStart() {
+    private fun touchStart() {
         path.reset()
         path.moveTo(motionTouchEventX, motionTouchEventY)
         currentX = motionTouchEventX
         currentY = motionTouchEventY
     }
 
-    fun touchMove()  {
+    private fun touchMove()  {
         val dx = Math.abs(motionTouchEventX - currentX)
         val dy = Math.abs(motionTouchEventY - currentY)
         if(dx >= touchTolerance || dy >= touchTolerance) {
             path.quadTo(currentX, currentY, (motionTouchEventX + currentX) /2, (motionTouchEventY + currentY) /2)
             currentX = motionTouchEventX
             currentY = motionTouchEventY
-            //Draw the path in the extra bitmap to cahe it
+            //Draw the path in the extra bitmap to cache it
+            //TODO: investigate if extraCanvas even does anything
             extraCanvas.drawPath(path, paint)
         }
         invalidate()
     }
 
-    fun touchUp() {
+    private fun touchUp() {
         // Add the current path to the drawing so far
         drawing.addPath(path)
         // Rewind the current path for the next touch
@@ -112,7 +114,17 @@ class MyCanvasView(context: Context, attributeSet: AttributeSet) : View(context,
     //endregion
 
     //region
+    private fun erase() {
 
+    }
+
+    private fun loadCanvas() {
+
+    }
+
+    private fun saveCanvas() {
+
+    }
     //endregion
 
 }

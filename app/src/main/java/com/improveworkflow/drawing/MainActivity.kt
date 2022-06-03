@@ -19,9 +19,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_drawing)
         //setContentView(R.layout.activity_main)
         //finding and setting toolbar
-        val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.thisspecifictoolbar)
-        setSupportActionBar(toolbar)
+        //val toolbar = findViewById<androidx.appcompat.widget.Toolbar>(R.id.thisspecifictoolbar)
+        //setSupportActionBar(toolbar)
         //home navigation
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        //supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 }
