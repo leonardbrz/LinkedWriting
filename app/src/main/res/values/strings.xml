@@ -4,5 +4,7 @@
    Drag your fingers to draw. Rotate the phone to clear.</string>
     <string name="brush">this selects the brush tool</string>
     <string name="erase">this selects the eraser button</string>
+    <string name="open">Navigation drawer open</string>
+    <string name="close">Navigation drawer close</string>
 
 </resources>

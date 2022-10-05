@@ -13,10 +13,13 @@ import androidx.core.content.res.ResourcesCompat
 
 
 private const val STROKE_WIDTH = 12f //has to be float
+private const val ERASING_RADIUS = 20f
 
 class MyCanvasView(context: Context, attributeSet: AttributeSet) : View(context, attributeSet) {
+
     private lateinit var extraCanvas: Canvas
     private lateinit var extraBitmap: Bitmap
+    var isErasing: Boolean = false
 
     private val backgroundColor = ResourcesCompat.getColor(resources, R.color.colorBackground, null)
 
@@ -35,13 +38,21 @@ class MyCanvasView(context: Context, attributeSet: AttributeSet) : View(context,
         super.onDraw(canvas)
         //canvas.drawBitmap(extraBitmap,0f,0f, null)
 
+        if(isErasing){
+            // If erase mode is active erase along path
+            canvas.clipOutPath(path)
+
+        } else {
+            // Draw any current squiggle
+            canvas.drawPath(path, paint)
+        }
+
         // Draw the drawing so far
         canvas.drawPath(drawing, paint)
-        // Draw any current squiggle
-        canvas.drawPath(path, paint)
+
     }
 
-    //region $methods and variables for simpler drawing
+    //region methods and variables for simpler drawing
 
     private val drawColor = ResourcesCompat.getColor(resources, R.color.colorPaint, null)
 
@@ -52,12 +63,25 @@ class MyCanvasView(context: Context, attributeSet: AttributeSet) : View(context,
         isAntiAlias = true
         // Dithering affects how colors with higher-precision than the device are down-sampled.
         isDither = true
+        // Stroking style
         style = Paint.Style.STROKE // default: FILL
         strokeJoin = Paint.Join.ROUND // default: MITER
         strokeCap = Paint.Cap.ROUND // default: BUTT
         strokeWidth = STROKE_WIDTH // default: Hairline-width (really thin)
     }
-
+    private val eraser = Paint().apply {
+        color = backgroundColor
+        // Smooths out edges of what is drawn without affecting shape.
+        isAntiAlias = true
+        // Dithering affects how colors with higher-precision than the device are down-sampled.
+        isDither = true
+        // Stroking style
+        style = Paint.Style.FILL // default: FILL
+        strokeJoin = Paint.Join.ROUND // default: MITER
+        strokeCap = Paint.Cap.ROUND // default: BUTT
+        strokeWidth = STROKE_WIDTH // default: Hairline-width (really thin)
+    }
+    // Current Path
     private var path = Path()
     // Path representing the drawing so far
     private val drawing = Path()
@@ -95,19 +119,25 @@ class MyCanvasView(context: Context, attributeSet: AttributeSet) : View(context,
         val dx = Math.abs(motionTouchEventX - currentX)
         val dy = Math.abs(motionTouchEventY - currentY)
         if(dx >= touchTolerance || dy >= touchTolerance) {
-            path.quadTo(currentX, currentY, (motionTouchEventX + currentX) /2, (motionTouchEventY + currentY) /2)
-            currentX = motionTouchEventX
-            currentY = motionTouchEventY
-            //Draw the path in the extra bitmap to cache it
-            //TODO: investigate if extraCanvas even does anything
-            extraCanvas.drawPath(path, paint)
+            if(!isErasing){
+                path.quadTo(currentX, currentY, (motionTouchEventX + currentX) /2, (motionTouchEventY + currentY) /2)
+                currentX = motionTouchEventX
+                currentY = motionTouchEventY
+                //Draw the path in the extra bitmap to cache it
+                extraCanvas.drawPath(path, paint)
+            } else {
+                path.quadTo(currentX, currentY, (motionTouchEventX + currentX) /2, (motionTouchEventY + currentY) /2)
+                currentX = motionTouchEventX
+                currentY = motionTouchEventY
+                extraCanvas.drawPath(path, eraser)
+            }
         }
         invalidate()
     }
 
     private fun touchUp() {
         // Add the current path to the drawing so far
-        drawing.addPath(path)
+        if(!isErasing) drawing.addPath(path)
         // Rewind the current path for the next touch
         path.reset()
     }
