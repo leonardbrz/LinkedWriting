@@ -3,28 +3,25 @@ package com.improveworkflow.drawing
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewConfiguration
 import androidx.core.content.res.ResourcesCompat
-import kotlin.math.E
+
 
 
 private const val STROKE_WIDTH = 12f //has to be float
-private const val ERASING_RADIUS = 20f
+private const val ERASING_RADIUS = 30f
 
+//MyCanvasView got to crowded, so i made a copy, and modified it using the ideas i thought could work
 
 class CanvasView2(context: Context, attributeSet: AttributeSet) : View(context, attributeSet) {
 
     private lateinit var extraCanvas: Canvas
     private lateinit var extraBitmap: Bitmap
 
+    //instead of juggeling boleans
     var touchInterpretationMode:TouchInterpretationMode = TouchInterpretationMode.DRAW
-
-    var isDrawing:Boolean = true
-    var isErasing:Boolean = false
-    var alternativeDrawMode:Boolean = false
 
     private val backgroundColor = ResourcesCompat.getColor(resources, R.color.colorBackground, null)
 
@@ -45,6 +42,7 @@ class CanvasView2(context: Context, attributeSet: AttributeSet) : View(context, 
         // Draw any current squiggle
         canvas.drawPath(chunkyPath, paint)
 
+        // Draw the Data structure i made up for paths
         for(i in myPath.pathSegments.indices){
             canvas.drawPath((myPath.pathSegments[i].mPath), paint)
         }
@@ -68,22 +66,13 @@ class CanvasView2(context: Context, attributeSet: AttributeSet) : View(context, 
         strokeWidth = STROKE_WIDTH // default: Hairline-width (really thin)
     }
 
-    // Current Path
-    private var path = Path()
-    private var currentPath = Path()
+    // Path Variables
     private var helperPath = Path()
     private var chunkyPath = Path()
-    private var eraserPath = Path()
 
-    // Painting so far
-    private var drawing = Path()
-
-    //Using Lists in Lists in Lists might just be a bad idea
     var myPath:MyPath = MyPath(mutableListOf())
 
-    // List of Paths representing the whole Painting
-    private var mDrawing: MutableList<Path> = mutableListOf()
-
+    //init for Screen touch variables
     private var motionTouchEventX = 0f
     private var motionTouchEventY = 0f
 
@@ -118,14 +107,19 @@ class CanvasView2(context: Context, attributeSet: AttributeSet) : View(context, 
         }
     }
 
+    //TODO: find the problem thats causign the line to be dotted: iI suspect it here
+
     private fun touchMove()  {
         val dx = Math.abs(motionTouchEventX - currentX)
         val dy = Math.abs(motionTouchEventY - currentY)
 
+        //only do something if the touch moved far enough
         if(dx >= touchTolerance || dy >= touchTolerance) {
+            //could be Switch Case
             if (touchInterpretationMode == TouchInterpretationMode.DRAW) {
                 chunkyPath.reset()
 
+                //Make the path for the piece of line emerging during this move
                 chunkyPath.moveTo(currentX, currentY)
                 chunkyPath.quadTo(motionTouchEventX, motionTouchEventY, (motionTouchEventX + currentX) /2, (motionTouchEventY + currentY) /2)
 
@@ -133,6 +127,7 @@ class CanvasView2(context: Context, attributeSet: AttributeSet) : View(context, 
                 helperPath = Path(chunkyPath)
                 myPath.addSegment(Segment(currentX, currentY, helperPath))
 
+                //current means from the last painted frame in this cass
                 currentX = motionTouchEventX
                 currentY = motionTouchEventY
             }
@@ -141,10 +136,12 @@ class CanvasView2(context: Context, attributeSet: AttributeSet) : View(context, 
                 circularErase(motionTouchEventX, motionTouchEventY, ERASING_RADIUS)
             }
         }
+        //needed so Canvas gets redrawn
         invalidate()
     }
 
     private fun touchUp() {
+        //cleanup mostly
         helperPath = Path(chunkyPath)
         myPath.addSegment(Segment(currentX, currentY, helperPath))
 
@@ -153,6 +150,7 @@ class CanvasView2(context: Context, attributeSet: AttributeSet) : View(context, 
     }
 
     private fun circularErase(x:Float, y:Float, radius:Float) {
+        //can't delete from the List you are iterating so I chose to do this
         var marked: MutableList<Segment> = mutableListOf()
         for(mSegment:Segment in myPath.pathSegments){
             if(kotlin.math.sqrt((mSegment.posX - x)*(mSegment.posX - x) + (mSegment.posY - y) * (mSegment.posY - y)) < radius){
@@ -164,7 +162,7 @@ class CanvasView2(context: Context, attributeSet: AttributeSet) : View(context, 
         }
     }
 }
-
+// just the enum
 enum class TouchInterpretationMode {
     ERASE, DRAW, MARK, LINK, HAND
 }

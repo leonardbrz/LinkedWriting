@@ -35,12 +35,15 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
+        //Setup for all the parts of views one might want to interact with later
         myCanvasView = findViewById(R.id.drawing)
         drawButton = findViewById(R.id.draw_button)
         drawButton.setOnClickListener(){setDrawMode()}
         eraseButton = findViewById(R.id.erase_button)
         eraseButton.setOnClickListener(){setEraseMode()}
 
+        //The documentation said this needs to be here for a Drawer to work
         drawerLayout = findViewById(R.id.drawerLayout)
         toggle = ActionBarDrawerToggle(this, drawerLayout, R.string.open, R.string.close)
         drawerLayout.addDrawerListener(toggle)
@@ -49,6 +52,7 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
+    //this does nothing as of jet
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if(toggle.onOptionsItemSelected(item)){
             return true
@@ -56,6 +60,7 @@ class MainActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
+    //Methods for influencing the mode of CanvasView2
     private fun setEraseMode(){
         myCanvasView.touchInterpretationMode = TouchInterpretationMode.ERASE
     }
