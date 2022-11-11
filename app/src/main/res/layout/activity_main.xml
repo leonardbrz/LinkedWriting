@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.improveworkflow.drawing.MyCanvasView
+        <com.improveworkflow.drawing.CanvasView2
             android:id="@+id/drawing"
             android:background="#FFFFFFFF"
             app:layout_constraintBottom_toBottomOf="parent"

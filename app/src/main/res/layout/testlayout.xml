@@ -32,6 +32,15 @@
             tools:layout_editor_absoluteY="0dp">
 
             <ImageButton
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:background="@drawable/roundedcornerimagebutton"
+                android:padding="3dp"
+                android:src="@drawable/ic_touch_hand"
+                android:id="@+id/hand_button"/>
+
+            <ImageButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="3dp"
@@ -48,6 +57,15 @@
                 android:padding="3dp"
                 android:src="@drawable/eraser"
                 android:id="@+id/erase_button"/>
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="3dp"
+                android:background="@drawable/roundedcornerimagebutton"
+                android:padding="3dp"
+                android:src="@android:drawable/ic_menu_share"
+                android:id="@+id/link_button"/>
 
         </LinearLayout>
 
