@@ -29,6 +29,8 @@
             android:id="@+id/live_sidebar">
         </include>
 
+        <!-- include the Pen Widget Via fragment???? -->
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

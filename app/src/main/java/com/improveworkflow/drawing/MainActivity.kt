@@ -28,7 +28,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var eraseButton: ImageButton
     lateinit var drawButton: ImageButton
     lateinit var testBrushButton: ImageButton
-    lateinit var touchInterpretaionMode:TouchInterpretationMode
     lateinit var context:Context
 
     override fun onCreate(savedInstanceState: Bundle?) {

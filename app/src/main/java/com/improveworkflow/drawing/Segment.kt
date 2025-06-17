@@ -4,6 +4,9 @@ import android.graphics.Color
 import android.graphics.Path
 //import kotlinx.serialization.Serializable
 
+//TODO make use of hashtables or something so segments may be easily that could also help with pointing to the next Segment in the line
+//that would allow for some nice features, maybe
+
 //@Serializable
 data class Segment (val x:Float,val y:Float,var path: Path) {
     fun toByteArray(): ByteArray {

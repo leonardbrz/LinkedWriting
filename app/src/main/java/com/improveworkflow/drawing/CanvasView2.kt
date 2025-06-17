@@ -10,7 +10,7 @@ import androidx.core.content.res.ResourcesCompat
 
 
 
-private const val STROKE_WIDTH = 12f //has to be float
+private const val STROKE_WIDTH = 12f
 private const val ERASING_RADIUS = 30f
 
 //MyCanvasView got to crowded, so i made a copy, and modified it using the ideas i thought could work
@@ -19,6 +19,8 @@ class CanvasView2(context: Context, attributeSet: AttributeSet) : View(context, 
 
     private lateinit var extraCanvas: Canvas
     private lateinit var extraBitmap: Bitmap
+
+    val stroke_width = 12f //has to be float
 
     //instead of juggeling boleans
     var touchInterpretationMode:TouchInterpretationMode = TouchInterpretationMode.DRAW
@@ -68,7 +70,11 @@ class CanvasView2(context: Context, attributeSet: AttributeSet) : View(context, 
 
     // Path Variables
     private var helperPath = Path()
+    private var helperPath2 = Path()
     private var chunkyPath = Path()
+    private var chunkyPath2 = Path()
+
+    private var pathInUse = 0
 
     var myPath:MyPath = MyPath(mutableListOf())
 
@@ -79,7 +85,8 @@ class CanvasView2(context: Context, attributeSet: AttributeSet) : View(context, 
     private var currentX = 0f
     private var currentY = 0f
 
-    private val touchTolerance = ViewConfiguration.get(context).scaledTouchSlop/5f
+    private val touchTolerance = 0.1f
+        // ViewConfiguration.get(context).scaledTouchSlop/5f
 
     // endregion
 
@@ -107,7 +114,7 @@ class CanvasView2(context: Context, attributeSet: AttributeSet) : View(context, 
         }
     }
 
-    //TODO: find the problem thats causign the line to be dotted: iI suspect it here
+    //TODO: find the problem thats causing the line to be dotted: iI suspect it here
 
     private fun touchMove()  {
         val dx = Math.abs(motionTouchEventX - currentX)
@@ -115,22 +122,56 @@ class CanvasView2(context: Context, attributeSet: AttributeSet) : View(context, 
 
         //only do something if the touch moved far enough
         if(dx >= touchTolerance || dy >= touchTolerance) {
-            //could be Switch Case
+
+            // i thought i had this problem nipped in the bud but i guess there is still so much to do
+
+            //my own implementation of canvas could to the trick
+            //but that should not be written in Kotlin, as I suspect it might be very slow then
+
+            /*
+
             if (touchInterpretationMode == TouchInterpretationMode.DRAW) {
-                chunkyPath.reset()
 
-                //Make the path for the piece of line emerging during this move
-                chunkyPath.moveTo(currentX, currentY)
-                chunkyPath.quadTo(motionTouchEventX, motionTouchEventY, (motionTouchEventX + currentX) /2, (motionTouchEventY + currentY) /2)
+                    chunkyPath.reset()
 
-                //needed to properly differentiate between the Paths so the Path held in Segment does not get reset????
-                helperPath = Path(chunkyPath)
-                myPath.addSegment(Segment(currentX, currentY, helperPath))
+
+                    //Make the path for the piece of line emerging during this move
+                    chunkyPath.moveTo(currentX, currentY)
+                    chunkyPath.quadTo(motionTouchEventX, motionTouchEventY, (motionTouchEventX + currentX) /2, (motionTouchEventY + currentY) /2)
+
+                    //needed to properly differentiate between the Paths so the Path held in Segment does not get reset????
+                    helperPath = Path(chunkyPath)
+                    myPath.addSegment(Segment(motionTouchEventX, motionTouchEventX, helperPath))
+                    pathInUse = 0
+
+
+
 
                 //current means from the last painted frame in this cass
                 currentX = motionTouchEventX
                 currentY = motionTouchEventY
             }
+
+             */
+
+
+
+            //TODO incorporate Bezier curves again. as it is is looks no good...
+            if(touchInterpretationMode == TouchInterpretationMode.DRAW){
+                chunkyPath.reset()
+
+                chunkyPath.moveTo(currentX, currentY)
+                chunkyPath.lineTo(motionTouchEventX, motionTouchEventY)
+
+                helperPath = Path(chunkyPath)
+
+                myPath.addSegment(motionTouchEventX, motionTouchEventY, helperPath)
+
+                currentX = motionTouchEventX
+                currentY = motionTouchEventY
+            }
+
+
 
             if(touchInterpretationMode == TouchInterpretationMode.ERASE){
                 circularErase(motionTouchEventX, motionTouchEventY, ERASING_RADIUS)
@@ -149,6 +190,8 @@ class CanvasView2(context: Context, attributeSet: AttributeSet) : View(context, 
         chunkyPath.reset()
     }
 
+
+    //TODO: make this not so fucking scuffed
     private fun circularErase(x:Float, y:Float, radius:Float) {
         //can't delete from the List you are iterating so I chose to do this
         var marked: MutableList<Segment> = mutableListOf()
